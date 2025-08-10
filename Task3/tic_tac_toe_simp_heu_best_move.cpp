@@ -46,6 +46,7 @@ const ll inf = 1e18 + 7;
 const ll mod = 998244353;
 // if(x&1==1)odd else even
 // if(x&(x-1)==0)power of two else not.(00100-1=00011&00100=00000)
+
 const char PLAYER1 = 'X', PLAYER2 = 'O', EMPTY = '.';
 char AI = 'O', HUMAN = 'X';
 
@@ -83,6 +84,7 @@ int evaluate(vvc &board) {
             else if (board[0][col] == HUMAN) return -10;
         }
     }
+
     if (board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
         if (board[0][0] == AI) return +10;
         else if (board[0][0] == HUMAN) return -10;
@@ -94,60 +96,56 @@ int evaluate(vvc &board) {
     return 0;
 }
 
-int minimax(vvc &board, int depth, bool isMax) {
-    int score = evaluate(board);
-    if (score == 10) return score - depth;
-    if (score == -10) return score + depth;
-    if (!movesLeft(board)) return 0;
-
-    if (isMax) {
-        int best = -1000;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (board[i][j] == EMPTY) {
-                    board[i][j] = AI;
-                    best = max(best, minimax(board, depth + 1, false));
-                    board[i][j] = EMPTY;
-                }
-            }
-        }
-        return best;
-    } else {
-        int best = 1000;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (board[i][j] == EMPTY) {
-                    board[i][j] = HUMAN;
-                    best = min(best, minimax(board, depth + 1, true));
-                    board[i][j] = EMPTY;
-                }
-            }
-        }
-        return best;
-    }
+bool isWin(vvc &board, char player) {
+    return evaluate(board) == (player == AI ? 10 : -10);
 }
 
+
 pi findBestMove(vvc &board) {
-    int bestVal = -1000;
-    pi bestMove = {-1, -1};
+
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             if (board[i][j] == EMPTY) {
                 board[i][j] = AI;
-                int moveVal = minimax(board, 0, false);
-                board[i][j] = EMPTY;
-                if (moveVal > bestVal) {
-                    bestMove = {i, j};
-                    bestVal = moveVal;
+                if (isWin(board, AI)) {
+                    board[i][j] = EMPTY;
+                    return {i, j};
                 }
+                board[i][j] = EMPTY;
             }
         }
     }
-    return bestMove;
-}
 
-bool isWin(vvc &board, char player) {
-    return evaluate(board) == (player == AI ? 10 : -10);
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (board[i][j] == EMPTY) {
+                board[i][j] = HUMAN;
+                if (isWin(board, HUMAN)) {
+                    board[i][j] = EMPTY;
+                    return {i, j};
+                }
+                board[i][j] = EMPTY;
+            }
+        }
+    }
+
+    if (board[1][1] == EMPTY) return {1, 1};
+
+    vector<pi> corners = {{0, 0}, {0, 2}, {2, 0}, {2, 2}};
+    for (auto &corner : corners) {
+        if (board[corner.first][corner.second] == EMPTY) {
+            return corner;
+        }
+    }
+
+    vector<pi> edges = {{0, 1}, {1, 0}, {1, 2}, {2, 1}};
+    for (auto &edge : edges) {
+        if (board[edge.first][edge.second] == EMPTY) {
+            return edge;
+        }
+    }
+
+    return {-1, -1};
 }
 
 int main() {
@@ -169,7 +167,7 @@ int main() {
     }
 
     if (mode == 2) {
-        cout << "Choose your symbol (X or O) [default X]: " << endl;
+        cout << "Press X to start your turn: " << endl;
         cout.flush();
         if (!(cin >> sym)) {
             cin.clear();

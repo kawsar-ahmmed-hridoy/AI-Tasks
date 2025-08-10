@@ -1,10 +1,56 @@
 #include <bits/stdc++.h>
 using namespace std;
+/*#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+template<class T>using pbds=tree<T,null_type, less <T>,rb_tree_tag,tree_order_statistics_node_update>;
+// less_equal=for ordered multiset.
+#define ofk(x) order_of_key(x)//returns number of item stricly smaller than k;
+#define fbk(x) find_by_order(x)//return x'th element & count from 0.*/
+#define ll long long int
+#define vi vector<ll>
+#define vc vector<char>
+#define vvc vector<vc>
+#define ump unordered_map<ll, int>
+#define ump2 unordered_map<char, int>
+#define pii pair<int,int>
+#define vp vector<pair<ll, ll>>
+#define faster_hridoy            \
+    ios::sync_with_stdio(false); \
+    cin.tie(NULL);               \
+    cout.tie(NULL)
+#define yes cout << "Yes\n"
+#define no cout << "No\n"
+#define rep(i, d, n) for (auto i = d; i < n; i++)
+#define pb push_back
+#define ft first
+#define sd second
+#define lcm(a, b) (a * b / __gcd(a, b))
+#define rall(a) (a).rbegin(), (a).rend()
+#define all(a) (a).begin(), (a).end()
+#define mem(x, a) memset(x, a, sizeof(x))
+#define input(a)       \
+    for (auto &it : a) \
+    cin >> it
+#define print(a)          \
+    for (auto &x : a)     \
+    {                     \
+        cout << x << ' '; \
+    }                     \
+    cout << endl
+#define endl '\n'
+#define PI 3.1415926535897932384
+const ll sz = 1e5 + 7;
+const int MX = 1e9 + 7;
+const ll inf = 1e18 + 7;
+const ll mod = 998244353;
+// if(x&1==1)odd else even
+// if(x&(x-1)==0)power of two else not.(00100-1=00011&00100=00000)
 
 const char PLAYER1 = 'X', PLAYER2 = 'O', EMPTY = '.';
 char AI = 'O', HUMAN = 'X';
 
-void printBoard(const vector<vector<char>>& board) {
+void printBoard(const vvc& board) {
     cout << "\n";
     for (int i = 0; i < 3; i++) {
         cout << " ";
@@ -18,14 +64,14 @@ void printBoard(const vector<vector<char>>& board) {
     cout << "\n";
 }
 
-bool movesLeft(const vector<vector<char>>& board) {
+bool movesLeft(const vvc& board) {
     for (const auto& row : board)
         for (char cell : row)
             if (cell == EMPTY) return true;
     return false;
 }
 
-bool isWin(const vector<vector<char>>& board, char player) {
+bool isWin(const vvc& board, char player) {
 
     for (int i = 0; i < 3; i++)
         if (board[i][0] == player && board[i][1] == player && board[i][2] == player)
@@ -37,14 +83,15 @@ bool isWin(const vector<vector<char>>& board, char player) {
 
     if (board[0][0] == player && board[1][1] == player && board[2][2] == player)
         return true;
-
     if (board[0][2] == player && board[1][1] == player && board[2][0] == player)
         return true;
     return false;
 }
 
-pair<int, int> findAnyMove(vector<vector<char>>& board) {
+pii findAnyMove(vvc& board) {
+
     if (board[1][1] == EMPTY) return {1, 1};
+
 
     for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
@@ -55,7 +102,7 @@ pair<int, int> findAnyMove(vector<vector<char>>& board) {
 }
 
 int main() {
-    vector<vector<char>> board(3, vector<char>(3, EMPTY));
+    vvc board(3, vector<char>(3, EMPTY));
     int mode = 2;
     char sym = 'X';
 
